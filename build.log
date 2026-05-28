@@ -1,0 +1,5 @@
+254 INFO: PyInstaller: 6.20.0, contrib hooks: 2026.5
+254 INFO: Python: 3.14.3
+290 INFO: Platform: Windows-11-10.0.26200-SP0
+290 INFO: Python environment: C:\Users\Siddharth\Downloads\Autonomous_Code_Debugging_Agent\.venv
+ERROR: Script file '"' does not exist.
