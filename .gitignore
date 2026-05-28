@@ -19,6 +19,9 @@ dist/
 .mypy_cache/
 .ruff_cache/
 
+# Large packaged archives
+Autonomous_Code_Debugging_Agent_Source.zip
+
 # Local config
 .env
 .env.*
