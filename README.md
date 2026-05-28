@@ -1,14 +1,15 @@
 # Autonomous Code Debugging Agent
 
-A desktop-friendly repository analysis tool that inspects a project, validates dependencies, and produces debugging insights with a polished dashboard.
+A desktop-friendly repository analysis tool that inspects a project, validates dependencies, and generates debugging insights through a polished Tkinter dashboard, a CLI workflow, and a notebook prototype.
 
 ## What this project does
 
-- Loads a repository and inspects its source files
-- Validates dependencies before analysis begins
-- Generates debugging suggestions and HTML reports
-- Provides a GUI dashboard for local use
+- Loads a local repository or GitHub URL for analysis
+- Validates dependencies and repository structure before analysis begins
+- Produces debugging suggestions and HTML reports for review
+- Provides a GUI dashboard for interactive use on Windows
 - Supports an installable Python package and a packaged Windows executable
+- Uses provider-backed LLM suggestions from OpenAI, Gemini, Anthropic, Groq, Grok, Mistral, OpenRouter, Azure OpenAI, and DeepSeek
 
 ## Quick start
 
@@ -19,7 +20,7 @@ The workspace already contains a ready-to-share executable bundle:
 - `dist/Autonomous Code Debugging Agent.exe`
 - `Autonomous_Code_Debugging_Agent_Install.zip`
 
-Extract the ZIP file and run the `.exe` directly. This is the simplest path for end users.
+Extract the ZIP file and run the `.exe` directly. This is the simplest path for end users and matches the current desktop app model.
 
 ### Option 2: Install the Python package
 
@@ -44,8 +45,10 @@ python dashboard.py
 You can also invoke the analysis workflow from the command line:
 
 ```bash
-python -m autonomous_code_debugging_agent.api.main --repo . --error "division by zero" --top-k 3
+python -m autonomous_code_debugging_agent.api.main --repo . --error "division by zero" --top-k 3 --report-dir reports
 ```
+
+This runs the same repository-analysis path used by the dashboard and writes an HTML report into the `reports/` folder.
 
 ## Notebook usage
 
@@ -65,14 +68,33 @@ You can override the defaults with:
 powershell -ExecutionPolicy Bypass -File .\run_agent.ps1 -Repo . -ErrorMessage "division by zero" -TopK 3
 ```
 
+## Current app model
+
+The current working model of the app is:
+
+- GUI dashboard for interactive analysis and report viewing
+- Shared repository-analysis workflow used by both the GUI and CLI
+- Notebook prototype for experimentation and iterative debugging loops
+
 ## Environment and keys
 
-- Set `OPENAI_API_KEY` or `GEMINI_API_KEY` if you want provider-backed LLM suggestions.
-- The dashboard also supports entering a custom runtime LLM key and saving it to `.env`.
-- The default embedding path is lightweight and does not require downloading a large model.
+Set one or more of the following keys if you want provider-backed LLM suggestions:
+
+- `OPENAI_API_KEY`
+- `GEMINI_API_KEY` or `GOOGLE_API_KEY`
+- `ANTHROPIC_API_KEY`
+- `GROQ_API_KEY`
+- `GROK_API_KEY` or `XAI_API_KEY`
+- `MISTRAL_API_KEY`
+- `OPENROUTER_API_KEY`
+- `DEEPSEEK_API_KEY`
+- `AZURE_OPENAI_API_KEY`
+
+The dashboard also supports entering a custom runtime key and saving it to `.env` for the selected provider.
 
 ## Notes
 
 - The packaged desktop executable is intended for local Windows use.
-- The notebook remains a useful interactive development entry point.
+- The notebook remains a useful interactive development entry point for prototyping and debugging loops.
 - The installable package is defined in `pyproject.toml` with the console entry point `autonomous-code-debugger`.
+- The current release model favors the desktop GUI first, with CLI and notebook support as complementary workflows.
