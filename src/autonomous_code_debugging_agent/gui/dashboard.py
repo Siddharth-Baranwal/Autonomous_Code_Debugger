@@ -61,7 +61,9 @@ PROVIDER_DISPLAY_NAMES = {
 }
 
 
+# Run the normalize provider name logic used by this module.
 def _normalize_provider_name(provider: str) -> str:
+    # Normalize provider names so aliases like 'Azure' and 'Grok AI' map to the same backend.
     normalized = provider.strip().lower().replace("_", " ")
     aliases = {
         "google gemini": "gemini",
@@ -76,7 +78,9 @@ def _normalize_provider_name(provider: str) -> str:
     return aliases.get(normalized, normalized)
 
 
+# Resolve the input into the repository path or source that the code needs.
 def resolve_repository_source(source_type: str, repo_input: str) -> str:
+    # Verify whether the user supplied a valid local path or a GitHub repository URL.
     value = repo_input.strip()
 
     if not value:
@@ -98,7 +102,9 @@ def resolve_repository_source(source_type: str, repo_input: str) -> str:
     raise ValueError(f"Unknown repository source type: {source_type}")
 
 
+# Apply the runtime setting or key to the current session.
 def apply_runtime_llm_key(provider: str, api_key: str) -> str:
+    # Apply the chosen API key to the current shell session for immediate use.
     provider = _normalize_provider_name(provider)
     key = api_key.strip()
 
@@ -116,7 +122,9 @@ def apply_runtime_llm_key(provider: str, api_key: str) -> str:
     return f"Custom {PROVIDER_DISPLAY_NAMES[provider]} key applied for this session."
 
 
+# Persist the user setting or key to the project configuration.
 def persist_llm_key_to_env(provider: str, api_key: str, env_path: Path | None = None) -> str:
+    # Save the selected API key to the project .env file for later runs.
     provider = _normalize_provider_name(provider)
     key = api_key.strip()
 
@@ -153,6 +161,7 @@ def persist_llm_key_to_env(provider: str, api_key: str, env_path: Path | None = 
 
 
 class DebuggingDashboardApp:
+    # Run the init   logic used by this module.
     def __init__(self, root: tk.Tk) -> None:
         self.root = root
         self.root.title("Autonomous Code Debugging Agent Dashboard")
@@ -187,6 +196,7 @@ class DebuggingDashboardApp:
 
         self.root.after(120, self._process_queue)
 
+    # Run the apply theme logic used by this module.
     def _apply_theme(self) -> None:
         style = self.style
         style.configure("TFrame", background=DARK_BG)
@@ -269,7 +279,9 @@ class DebuggingDashboardApp:
 
         style.configure("Dark.TSeparator", background=DARK_BORDER)
 
+    # Run the build top bar logic used by this module.
     def _build_top_bar(self) -> None:
+        # Draw the top branding bar for the desktop dashboard.
         top_bar = tk.Frame(self.root, bg=DARK_BG)
         top_bar.pack(fill="x", padx=18, pady=(18, 6))
 
@@ -293,7 +305,9 @@ class DebuggingDashboardApp:
         )
         subtitle.pack(side="left", padx=(14, 0))
 
+    # Run the build run tab logic used by this module.
     def _build_run_tab(self) -> None:
+        # Build the main analysis tab with repo input, status, and logging UI.
         frame = ttk.Frame(self.notebook, style="Dark.TFrame")
         self.notebook.add(frame, text="Run Analysis")
 
@@ -423,7 +437,9 @@ class DebuggingDashboardApp:
 
         self._sync_repository_input()
 
+    # Run the setup status badge logic used by this module.
     def _setup_status_badge(self) -> None:
+        # Create the small status badge shown in the top-right corner.
         self.status_badge = tk.Label(
             self.root,
             text="Ready",
@@ -438,7 +454,9 @@ class DebuggingDashboardApp:
         )
         self.status_badge.place(relx=1.0, rely=0.0, anchor="ne", x=-22, y=12)
 
+    # Run the build report tab logic used by this module.
     def _build_report_tab(self) -> None:
+        # Build the HTML report preview tab used to show generated analysis output.
         frame = ttk.Frame(self.notebook, style="Dark.TFrame")
         self.notebook.add(frame, text="HTML Report")
         frame.grid_rowconfigure(0, weight=1)
@@ -468,6 +486,7 @@ class DebuggingDashboardApp:
             "<html><body style='background:#0b1120;color:#e2e8f0;font-family:Segoe UI,Arial,sans-serif;padding:24px;'><h2>HTML Report Preview</h2><p>The generated HTML summary will appear here after analysis or when a saved report is loaded.</p></body></html>"
         )
 
+    # Run the sync repository input logic used by this module.
     def _sync_repository_input(self) -> None:
         source_type = self.source_type_var.get()
         if source_type == "GitHub":
@@ -486,12 +505,14 @@ class DebuggingDashboardApp:
             self.repo_entry.delete(0, tk.END)
             self.repo_entry.insert(0, ".")
 
+    # Run the append log logic used by this module.
     def _append_log(self, message: str) -> None:
         self.log.configure(state="normal")
         self.log.insert("end", f"{message}\n")
         self.log.see("end")
         self.log.configure(state="disabled")
 
+    # Run the update status badge logic used by this module.
     def _update_status_badge(self, state: str) -> None:
         mapping = {
             "ready": ("Ready", DARK_SUCCESS),
@@ -503,6 +524,7 @@ class DebuggingDashboardApp:
         self.badge_state = state
         self.status_badge.configure(text=label, bg=color)
 
+    # Run the save custom llm key logic used by this module.
     def _save_custom_llm_key(self) -> None:
         try:
             provider = self.llm_provider_var.get()
@@ -517,6 +539,7 @@ class DebuggingDashboardApp:
             self.llm_key_status_var.set(str(exc))
             messagebox.showwarning("Invalid LLM key", str(exc))
 
+    # Run the apply status from text logic used by this module.
     def _apply_status_from_text(self, status_text: str) -> None:
         lowered = status_text.lower()
         if "error" in lowered or "failed" in lowered:
@@ -532,6 +555,7 @@ class DebuggingDashboardApp:
             return
         self._update_status_badge("running")
 
+    # Run the load existing report if available logic used by this module.
     def _load_existing_report_if_available(self, repo_source: str) -> bool:
         from ..reporting.html_reporter import HTMLReportGenerator
 
@@ -549,6 +573,7 @@ class DebuggingDashboardApp:
         self.run_button.state(["!disabled"])
         return True
 
+    # Run the reset view logic used by this module.
     def reset_view(self) -> None:
         self.progress.configure(value=0)
         self.status_var.set("Ready. Choose a repository source and start the analysis.")
@@ -563,6 +588,7 @@ class DebuggingDashboardApp:
         self.run_button.state(["!disabled"])
         self._sync_repository_input()
 
+    # Run the start analysis logic used by this module.
     def start_analysis(self) -> None:
         source_type = self.source_type_var.get()
         try:
@@ -587,7 +613,9 @@ class DebuggingDashboardApp:
         )
         self.analysis_thread.start()
 
+    # Run the run analysis logic used by this module.
     def _run_analysis(self, repo_source: str) -> None:
+        # Execute the analysis pipeline in a background thread and emit progress events.
         try:
             from ..workflows.debugging_loop import analyze_repository_with_html_report
 
@@ -621,7 +649,9 @@ class DebuggingDashboardApp:
         except Exception as exc:
             self.event_queue.put(("error", str(exc)))
 
+    # Run the process queue logic used by this module.
     def _process_queue(self) -> None:
+        # Handle queued UI updates from the background analysis thread.
         try:
             while True:
                 event_type, payload = self.event_queue.get_nowait()
@@ -659,6 +689,7 @@ class DebuggingDashboardApp:
         self.run_button.state(["!disabled"])
 
 
+# Run the main logic used by this module.
 def main() -> None:
     root = tk.Tk()
     app = DebuggingDashboardApp(root)

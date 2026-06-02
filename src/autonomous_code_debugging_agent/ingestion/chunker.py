@@ -4,7 +4,10 @@ import ast
 from pathlib import Path
 
 
+# Run the chunk code logic used by this module.
 def chunk_code(source: str, path: str | Path) -> list[dict[str, str | int]]:
+    # ast.parse() converts Python text into a syntax tree; walking that tree gives each function node.
+    # The line numbers from the AST are used to slice the original source text into the exact function body.
     path = Path(path)
     try:
         tree = ast.parse(source)
@@ -48,7 +51,9 @@ def chunk_code(source: str, path: str | Path) -> list[dict[str, str | int]]:
     return chunks
 
 
+# Run the chunk repository logic used by this module.
 def chunk_repository(files: list[str]) -> list[dict[str, str | int]]:
+    # Build the full chunk list for all discovered repository files.
     chunks = []
     for file_path in files:
         source = Path(file_path).read_text(encoding="utf-8", errors="ignore")

@@ -10,10 +10,14 @@ load_dotenv()
 
 
 class LLMInterface:
+    # Run the init   logic used by this module.
     def __init__(self, model: str = "gpt-3.5-turbo") -> None:
         self.model = model
 
+    # Run the ask llm logic used by this module.
     def ask_llm(self, prompt: str) -> str:
+        # provider_order is evaluated top-to-bottom; the first provider with a non-empty API key is used.
+        # Each branch builds a request payload and returns the first text chunk from the model response.
         provider_order = [
             ("openai", os.getenv("OPENAI_API_KEY"), None),
             ("gemini", os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY"), "gemini"),

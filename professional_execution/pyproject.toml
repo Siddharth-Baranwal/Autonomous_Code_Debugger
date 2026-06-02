@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "autonomous-code-debugging-agent"
+version = "0.1.0"
+description = "Modular repository analysis and debugging workflow"
+requires-python = ">=3.10"
+dependencies = [
+  "openai",
+  "python-dotenv",
+  "scikit-learn",
+  "sentence-transformers",
+  "tkinterweb",
+  "anthropic",
+]
+
+[project.scripts]
+autonomous-code-debugger = "autonomous_code_debugging_agent.gui.dashboard:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]

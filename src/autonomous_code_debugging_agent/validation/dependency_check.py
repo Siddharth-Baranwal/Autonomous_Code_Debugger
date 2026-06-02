@@ -9,6 +9,7 @@ from pathlib import Path
 from ..ingestion.repo_loader import clone_repository_from_github
 
 
+# Run the is github url logic used by this module.
 def _is_github_url(value: str | Path) -> bool:
     if not isinstance(value, str):
         return False
@@ -39,6 +40,7 @@ class RepoValidationResult:
     exit_code: int = 0
 
 
+# Run the resolve repo root logic used by this module.
 def _resolve_repo_root(repo_source: str | Path) -> Path:
     if _is_github_url(repo_source):
         repo_name = str(repo_source).rstrip("/").split("/")[-1]
@@ -51,10 +53,12 @@ def _resolve_repo_root(repo_source: str | Path) -> Path:
     return _normalize_repo_root(root)
 
 
+# Run the has dependency manifest logic used by this module.
 def _has_dependency_manifest(repo_root: Path) -> bool:
     return any((repo_root / manifest).exists() for manifest in DEPENDENCY_MANIFESTS)
 
 
+# Run the normalize repo root logic used by this module.
 def _normalize_repo_root(repo_root: Path) -> Path:
     if _has_dependency_manifest(repo_root):
         return repo_root
@@ -66,12 +70,14 @@ def _normalize_repo_root(repo_root: Path) -> Path:
     return repo_root
 
 
+# Run the build validation command logic used by this module.
 def _build_validation_command() -> list[str]:
     if shutil.which("uv"):
         return ["uv", "run", "--with", "pytest", "pytest"]
     return [sys.executable, "-m", "pytest"]
 
 
+# Run the summarize failure logic used by this module.
 def _summarize_failure(result: subprocess.CompletedProcess[str]) -> str:
     combined = "\n".join(part for part in (result.stdout, result.stderr) if part).strip()
 
@@ -95,7 +101,9 @@ def _summarize_failure(result: subprocess.CompletedProcess[str]) -> str:
     return f"Dependency validation failed: {combined.splitlines()[-1].strip()}"
 
 
+# Validate the repository or environment before continuing the workflow.
 def validate_repository_dependencies(repo_source: str | Path) -> RepoValidationResult:
+    # Resolve the target repository and validate whether its dependency setup works.
     repo_root = _resolve_repo_root(repo_source)
 
     if not _has_dependency_manifest(repo_root):

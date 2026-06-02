@@ -51,12 +51,14 @@ IGNORED_DIRS = {
 }
 
 
+# Run the is github url logic used by this module.
 def _is_github_url(value: str | Path) -> bool:
     if not isinstance(value, str):
         return False
     return value.startswith(("http://", "https://")) and "github.com/" in value
 
 
+# Run the has code files logic used by this module.
 def _has_code_files(root: Path) -> bool:
     for path in root.rglob("*"):
         if path.is_file() and path.suffix.lower() in ALLOWED_EXTENSIONS:
@@ -64,7 +66,9 @@ def _has_code_files(root: Path) -> bool:
     return False
 
 
+# Clone or download a repository into a local cache folder.
 def clone_repository_from_github(github_url: str, dest_dir: str | Path) -> str:
+    # Download or clone a GitHub repository into a local cache folder.
     dest = Path(dest_dir)
     if dest.exists() and any(dest.iterdir()):
         print(f"Repository destination exists and non-empty; reusing: {dest}")
@@ -107,7 +111,10 @@ def clone_repository_from_github(github_url: str, dest_dir: str | Path) -> str:
         raise RuntimeError(f"Failed to clone or download repo: {exc}") from exc
 
 
+# List the matching files or items that the caller can inspect next.
 def list_code_files(root: str | Path):
+    # os.walk yields the current folder, its child folders, and file names in that folder.
+    # We filter out generated folders and skip files larger than 5 MB to keep analysis cheap.
     root_path = Path(root)
     code_files = []
 
@@ -133,7 +140,9 @@ def list_code_files(root: str | Path):
     return code_files
 
 
+# Load repository data or environment values for the next step.
 def load_repository(repo_source: str | Path):
+    # Resolve local or GitHub input into a usable repository root.
     if _is_github_url(repo_source):
         repo_name = str(repo_source).rstrip("/").split("/")[-1]
         cache_root = Path(".cache") / repo_name

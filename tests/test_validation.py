@@ -8,6 +8,7 @@ from autonomous_code_debugging_agent.validation.dependency_check import validate
 
 
 class DependencyValidationTests(unittest.TestCase):
+    # Run the test validate repository dependencies passes for manifest logic used by this module.
     def test_validate_repository_dependencies_passes_for_manifest(self):
         with tempfile.TemporaryDirectory() as temp_dir:
             repo_root = Path(temp_dir)
@@ -30,6 +31,7 @@ class DependencyValidationTests(unittest.TestCase):
             self.assertIn("pytest", run_mock.call_args.args[0])
             self.assertIn("passed", result.message.lower())
 
+    # Run the test validate repository dependencies fails for missing dependency logic used by this module.
     def test_validate_repository_dependencies_fails_for_missing_dependency(self):
         with tempfile.TemporaryDirectory() as temp_dir:
             repo_root = Path(temp_dir)
@@ -51,6 +53,7 @@ class DependencyValidationTests(unittest.TestCase):
             self.assertFalse(result.ok)
             self.assertIn("logtools", result.message)
 
+    # Run the test validate repository dependencies skips when manifest missing logic used by this module.
     def test_validate_repository_dependencies_skips_when_manifest_missing(self):
         with tempfile.TemporaryDirectory() as temp_dir:
             repo_root = Path(temp_dir)
@@ -59,6 +62,7 @@ class DependencyValidationTests(unittest.TestCase):
             self.assertTrue(result.ok)
             self.assertIn("No dependency manifest", result.message)
 
+    # Run the test validate repository dependencies handles nested clone root logic used by this module.
     def test_validate_repository_dependencies_handles_nested_clone_root(self):
         with tempfile.TemporaryDirectory() as temp_dir:
             repo_root = Path(temp_dir)

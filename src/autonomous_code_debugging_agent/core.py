@@ -60,7 +60,9 @@ IGNORED_DIRS = {
 }
 
 
+# Load repository data or environment values for the next step.
 def load_env_file(env_path: str | Path = ".env") -> None:
+    # Load .env values into the current process only when they are not already set.
     path = Path(env_path)
     if not path.exists():
         return
@@ -73,6 +75,7 @@ def load_env_file(env_path: str | Path = ".env") -> None:
         os.environ.setdefault(key.strip(), value.strip().strip('"').strip("'"))
 
 
+# Return True when the current input satisfies the required condition.
 def has_code_files(root: Path) -> bool:
     for path in root.rglob("*"):
         if path.is_file() and path.suffix.lower() in ALLOWED_EXTENSIONS:
@@ -80,6 +83,7 @@ def has_code_files(root: Path) -> bool:
     return False
 
 
+# Clone or download a repository into a local cache folder.
 def clone_repository_from_github(github_url: str, dest_dir: str | Path) -> str:
     dest = Path(dest_dir)
     destination_exists = dest.exists() and any(dest.iterdir())
@@ -124,6 +128,7 @@ def clone_repository_from_github(github_url: str, dest_dir: str | Path) -> str:
         raise RuntimeError(f"Failed to clone or download repo: {exc}") from exc
 
 
+# List the matching files or items that the caller can inspect next.
 def list_code_files(root: str | Path):
     root_path = Path(root)
     code_files = []
@@ -150,6 +155,7 @@ def list_code_files(root: str | Path):
     return code_files
 
 
+# Extract the code chunks or metadata needed for retrieval.
 def extract_chunks_from_file(path: str | Path):
     path = Path(path)
     ext = path.suffix.lower()
@@ -214,7 +220,9 @@ def extract_chunks_from_file(path: str | Path):
         return []
 
 
+# Build the internal data structure used by the analysis pipeline.
 def build_index(root: str | Path):
+    # Build a TF-IDF index over all discoverable code chunks.
     files = list_code_files(root)
     chunks = []
     for file_path in files:
@@ -226,7 +234,9 @@ def build_index(root: str | Path):
     return {"chunks": chunks, "vectorizer": vectorizer, "X": matrix}
 
 
+# Search the index and return the best matching chunks for the query.
 def query_index(index, query_text: str, top_k: int = 5):
+    # Rank chunks by similarity and prefer those whose identifiers match the query.
     if index["X"] is None or index["X"].shape[0] == 0:
         return []
 
@@ -255,6 +265,7 @@ def query_index(index, query_text: str, top_k: int = 5):
     ]
 
 
+# Return the requested value or object from the current state.
 def get_llm_fix(error_message: str, relevant_code: str):
     prompt = f"Error: {error_message}\nRelevant code:\n{relevant_code}\nGive one fix."
     from .reasoning.llm_interface import LLMInterface

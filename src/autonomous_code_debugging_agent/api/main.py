@@ -6,7 +6,9 @@ import json
 from ..workflows.debugging_loop import analyze_repository_with_html_report
 
 
+# Run the main logic used by this module.
 def main() -> None:
+    # Parse command-line options for repo path, error text, and result count.
     parser = argparse.ArgumentParser(description="Analyze a repository for a failing error message.")
     parser.add_argument("--repo", required=True, help="Path to a local repository or a GitHub URL")
     parser.add_argument("--error", required=True, help="Error or query text to analyze")
@@ -14,6 +16,7 @@ def main() -> None:
     parser.add_argument("--report-dir", default="reports", help="Directory where the HTML report will be written")
     args = parser.parse_args()
 
+    # Run the main analysis workflow and print the structured result as JSON.
     report = analyze_repository_with_html_report(
         args.repo,
         args.error,

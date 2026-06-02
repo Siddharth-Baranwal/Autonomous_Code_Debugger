@@ -7,6 +7,7 @@ from autonomous_code_debugging_agent.workflows.debugging_loop import analyze_rep
 
 
 class ReportingTests(unittest.TestCase):
+    # Run the test html report generator writes summary file logic used by this module.
     def test_html_report_generator_writes_summary_file(self):
         with tempfile.TemporaryDirectory() as temp_dir:
             report = {
@@ -38,6 +39,7 @@ class ReportingTests(unittest.TestCase):
             self.assertIn("Guard against division by zero.", html)
             self.assertIn("src/example.py", html)
 
+    # Run the test analyze repository with html report writes file logic used by this module.
     def test_analyze_repository_with_html_report_writes_file(self):
         with tempfile.TemporaryDirectory() as temp_dir:
             repo_root = Path(temp_dir)

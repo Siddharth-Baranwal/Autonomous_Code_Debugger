@@ -5,12 +5,15 @@ from pathlib import Path
 
 from autonomous_code_debugging_agent.workflows.debugging_loop import analyze_repository
 
+# Helper script to generate example HTML reports from known test repositories.
 BASE_DIR = Path(__file__).resolve().parent
 REPORTS_DIR = BASE_DIR / "reports"
 REPORTS_DIR.mkdir(exist_ok=True)
 
 
+# Run the build root cause logic used by this module.
 def _build_root_cause(repo_name: str, error_message: str, result: dict | None) -> str:
+    # Provide sample root-cause explanations for the demo repositories.
     if repo_name == "acda-test-repo-1":
         return (
             "The repo contains a `to_int` helper that calls `int(x)` directly. "
@@ -28,6 +31,7 @@ def _build_root_cause(repo_name: str, error_message: str, result: dict | None) -
     return "Root cause could not be inferred from the available snapshot."
 
 
+# Run the build suggested solution logic used by this module.
 def _build_suggested_solution(repo_name: str, suggestion: str) -> str:
     if repo_name == "acda-test-repo-1":
         return (
@@ -46,16 +50,19 @@ def _build_suggested_solution(repo_name: str, suggestion: str) -> str:
     return suggestion
 
 
+# Run the escape logic used by this module.
 def _escape(text: str) -> str:
     return escape(text, quote=True)
 
 
+# Run the render code block logic used by this module.
 def _render_code_block(code: str) -> str:
     if not code:
         return "<p>No matching code chunk available.</p>"
     return f"<pre><code>{_escape(code)}</code></pre>"
 
 
+# Run the build html logic used by this module.
 def _build_html(repo_name: str, repo_url: str, error_message: str, report: dict) -> str:
     results = report.get("results", [])
     first_result = results[0] if results else None
@@ -128,6 +135,7 @@ def _build_html(repo_name: str, repo_url: str, error_message: str, report: dict)
 
 
 def generate_reports() -> list[Path]:
+    # Generate sample HTML reports for the built-in demo repositories.
     cases = [
         (
             "acda-test-repo-1",

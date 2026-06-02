@@ -4,7 +4,9 @@ import os
 from pathlib import Path
 
 
+# Return the requested value or object from the current state.
 def get_settings(env_path: str | Path = ".env") -> dict[str, str]:
+    # Merge environment variables with the local .env file for a consistent config view.
     settings = dict(os.environ)
     env_file = Path(env_path)
     if not env_file.exists():

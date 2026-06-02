@@ -15,6 +15,7 @@ from autonomous_code_debugging_agent.retrieval.retriever import retrieve_relevan
 
 
 class PipelineTests(unittest.TestCase):
+    # Run the test load repository collects python files logic used by this module.
     def test_load_repository_collects_python_files(self):
         with tempfile.TemporaryDirectory() as temp_dir:
             repo_root = Path(temp_dir)
@@ -27,6 +28,7 @@ class PipelineTests(unittest.TestCase):
             self.assertIn(str(repo_root / "sample.py"), snapshot["files"])
             self.assertIn(str(repo_root / "helper.py"), snapshot["files"])
 
+    # Run the test chunk code extracts function chunks logic used by this module.
     def test_chunk_code_extracts_function_chunks(self):
         source = "def add(a, b):\n    return a + b\n\nclass Calculator:\n    def subtract(self, a, b):\n        return a - b\n"
 
@@ -36,6 +38,7 @@ class PipelineTests(unittest.TestCase):
         self.assertEqual(chunks[0]["name"], "add")
         self.assertEqual(chunks[1]["name"], "subtract")
 
+    # Run the test retriever returns most relevant chunk logic used by this module.
     def test_retriever_returns_most_relevant_chunk(self):
         embedder = create_embedder("fallback")
         store = InMemoryVectorStore(embedder)
@@ -46,11 +49,13 @@ class PipelineTests(unittest.TestCase):
 
         self.assertEqual(results[0]["metadata"]["name"], "safe_divide")
 
+    # Run the test embedder import does not eagerly import sentence transformers logic used by this module.
     def test_embedder_import_does_not_eagerly_import_sentence_transformers(self):
         import builtins
 
         original_import = builtins.__import__
 
+        # Run the guarded import logic used by this module.
         def guarded_import(name, globals=None, locals=None, fromlist=(), level=0):
             if name == "sentence_transformers":
                 raise AssertionError("sentence_transformers should not be imported during embedder import")
@@ -67,6 +72,7 @@ class PipelineTests(unittest.TestCase):
 
         self.assertTrue(hasattr(embedder_module, "create_embedder"))
 
+    # Run the test load repository accepts string root from clone logic used by this module.
     def test_load_repository_accepts_string_root_from_clone(self):
         with tempfile.TemporaryDirectory() as temp_dir:
             repo_root = Path(temp_dir)

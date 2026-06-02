@@ -1,0 +1,7 @@
+# Linux Installable Setup
+
+This folder contains a Linux-ready archive containing the Python installable package.
+
+- `Autonomous_Code_Debugging_Agent_linux.tar.gz` — extract this archive on Linux.
+- Then install with `python -m pip install .` from the extracted folder.
+- `README.md` is also included in the archive for general project info.

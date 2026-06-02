@@ -8,24 +8,28 @@ A desktop-friendly repository analysis tool that inspects a project, validates d
 - Validates dependencies and repository structure before analysis begins
 - Produces debugging suggestions and HTML reports for review
 - Provides a GUI dashboard for interactive use on Windows
-- Supports an installable Python package and a packaged Windows executable
+- Supports an installable Python package, a packaged Windows executable, and source ZIP packaging helpers
 - Uses provider-backed LLM suggestions from OpenAI, Gemini, Anthropic, Groq, Grok, Mistral, OpenRouter, Azure OpenAI, and DeepSeek
 
 ## Quick start
 
-### Option 1: Use the packaged Windows app
+### Option 1: Use the packaged desktop releases
 
-The workspace already contains a ready-to-share executable bundle:
+This repository contains ready-to-share deliverables:
 
-- `dist/Autonomous Code Debugging Agent.exe`
+- `windows_setup/Autonomous Code Debugging Agent.exe`
+- `installable_app/windows_executable/Autonomous Code Debugging Agent.exe`
+- `installable_app/dist/autonomous_code_debugging_agent-0.1.0-py3-none-any.whl`
+- `macos_setup/Autonomous_Code_Debugging_Agent_mac.tar.gz`
+- `linux_setup/Autonomous_Code_Debugging_Agent_linux.tar.gz`
 - `Autonomous_Code_Debugging_Agent_Install.zip`
 
-Extract the ZIP file and run the `.exe` directly. This is the simplest path for end users and matches the current desktop app model.
+Extract the ZIP, run the executable, or install the wheel directly. The release artifacts are intended for handoff and review without build or cache folders.
 
-### Option 2: Install the Python package
+### Option 2: Install the Python package wheel
 
 ```bash
-python -m pip install -e .
+python -m pip install installable_app/dist/autonomous_code_debugging_agent-0.1.0-py3-none-any.whl
 ```
 
 After installation, launch the GUI from anywhere with:
@@ -34,7 +38,20 @@ After installation, launch the GUI from anywhere with:
 autonomous-code-debugger
 ```
 
-### Option 3: Run from the repository
+### Option 3: Install the repository in editable mode
+
+```bash
+cd installable_app
+python -m pip install -e .
+```
+
+Then launch:
+
+```bash
+autonomous-code-debugger
+```
+
+### Option 4: Run from the repository
 
 ```bash
 python dashboard.py
@@ -53,6 +70,8 @@ This runs the same repository-analysis path used by the dashboard and writes an 
 ## Notebook usage
 
 Open `Project_Autonomous_Code_Debugging_Agent.ipynb` and run the cells in order. The notebook imports the package from `src/autonomous_code_debugging_agent`.
+
+You can also use the helper notebook `create_source_zip.ipynb` to recreate the source archive in a notebook-friendly workflow.
 
 ## Windows launcher
 
@@ -75,6 +94,7 @@ The current working model of the app is:
 - GUI dashboard for interactive analysis and report viewing
 - Shared repository-analysis workflow used by both the GUI and CLI
 - Notebook prototype for experimentation and iterative debugging loops
+- Packaging helpers for source ZIP generation and desktop distribution
 
 ## Environment and keys
 
@@ -97,4 +117,6 @@ The dashboard also supports entering a custom runtime key and saving it to `.env
 - The packaged desktop executable is intended for local Windows use.
 - The notebook remains a useful interactive development entry point for prototyping and debugging loops.
 - The installable package is defined in `pyproject.toml` with the console entry point `autonomous-code-debugger`.
-- The current release model favors the desktop GUI first, with CLI and notebook support as complementary workflows.
+- The current release folders include `professional_execution/`, `installable_app/`, `windows_setup/`, `macos_setup/`, and `linux_setup/`.
+- The current release model favors the desktop GUI first, with CLI, notebook, and packaging helpers as complementary workflows.
+- Utility scripts such as `create_source_zip.py` help create a cleaner handoff archive without build or cache folders.

@@ -4,11 +4,14 @@ import numpy as np
 
 
 class InMemoryVectorStore:
+    # Run the init   logic used by this module.
     def __init__(self, embedder) -> None:
         self.embedder = embedder
         self.records: list[dict[str, object]] = []
 
+    # Run the add logic used by this module.
     def add(self, text: str, metadata: dict[str, str] | None = None) -> None:
+        # Encode the chunk once so it is ready for similarity search.
         self.embedder.encode([text])
         self.records.append(
             {
@@ -17,7 +20,10 @@ class InMemoryVectorStore:
             }
         )
 
+    # Run the search logic used by this module.
     def search(self, query: str, top_k: int = 5) -> list[dict[str, object]]:
+        # np.dot computes the numerator of cosine similarity, and the norms in the denominator normalize the vectors.
+        # We keep only scores greater than zero so unrelated chunks are discarded.
         if not self.records:
             return []
 

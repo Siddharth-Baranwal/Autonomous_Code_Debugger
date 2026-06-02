@@ -13,16 +13,20 @@ from ..retrieval.retriever import retrieve_relevant_chunks
 from ..validation.dependency_check import validate_repository_dependencies
 
 
+# Build the internal data structure used by the analysis pipeline.
 def build_index(repo_source, embedder=None):
+    # Load repository files and confirm the target project can be validated.
     snapshot = load_repository(repo_source)
     validation = validate_repository_dependencies(snapshot["root"])
     if not validation.ok:
         raise RuntimeError(validation.message)
 
+    # Split the repository into smaller code chunks for better retrieval.
     chunks = chunk_repository(snapshot["files"])
     embedder = embedder or create_embedder("auto")
     store = InMemoryVectorStore(embedder)
 
+    # Add every chunk to the in-memory vector store for similarity search.
     for chunk in chunks:
         metadata = {"path": str(chunk["path"]), "name": str(chunk["name"]), "kind": str(chunk["kind"])}
         store.add(str(chunk["code"]), metadata)
@@ -30,10 +34,13 @@ def build_index(repo_source, embedder=None):
     return {"snapshot": snapshot, "chunks": chunks, "store": store}
 
 
+# Run the analysis workflow for the provided repository and error text.
 def analyze_repository(repo_source, error_message, top_k: int = 5):
+    # Build the search index and retrieve the best matching code snippets.
     index = build_index(repo_source)
     results = retrieve_relevant_chunks(index["store"], error_message, top_k=top_k)
 
+    # Combine the best code context into one prompt for the LLM.
     code_context = "\n\n".join(str(result["text"]) for result in results)
     prompt = DEBUG_PROMPT.format(error=error_message, code=code_context)
     suggestion = LLMInterface().ask_llm(prompt)
@@ -41,6 +48,7 @@ def analyze_repository(repo_source, error_message, top_k: int = 5):
     return {"snapshot": index["snapshot"], "results": results, "suggestion": suggestion}
 
 
+# Run the analysis workflow for the provided repository and error text.
 def analyze_repository_with_html_report(
     repo_source,
     error_message,
@@ -48,6 +56,7 @@ def analyze_repository_with_html_report(
     output_dir: str | Path | None = None,
     report_name: str | None = None,
 ):
+    # Generate the analysis result and then save it as an HTML report.
     report = analyze_repository(repo_source, error_message, top_k=top_k)
     report_path = HTMLReportGenerator().save_report(
         report=report,

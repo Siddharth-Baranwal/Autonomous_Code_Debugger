@@ -6,10 +6,13 @@ from urllib.parse import urlparse
 
 
 class HTMLReportGenerator:
+    # Run the init   logic used by this module.
     def __init__(self, reports_dir: Path | None = None) -> None:
         self.reports_dir = Path(reports_dir) if reports_dir is not None else Path.cwd() / "reports"
 
+    # Run the repo name logic used by this module.
     def _repo_name(self, repo_source: str | Path) -> str:
+        # Convert the repository input into a friendly display name for the report.
         if isinstance(repo_source, Path):
             repo_source = str(repo_source)
 
@@ -24,10 +27,12 @@ class HTMLReportGenerator:
         path = Path(repo_source).expanduser()
         return path.name or "repository"
 
+    # Run the safe filename logic used by this module.
     def _safe_filename(self, repo_name: str) -> str:
         safe = "".join(ch if ch.isalnum() or ch in {"-", "_"} else "-" for ch in repo_name)
         return safe.strip("-") or "repository"
 
+    # Run the root cause logic used by this module.
     def _root_cause(self, report: dict, error_message: str) -> str:
         results = report.get("results", [])
         first_result = results[0] if results else None
@@ -50,12 +55,14 @@ class HTMLReportGenerator:
 
         return "No specific root cause could be inferred from the available report data."
 
+    # Run the suggested solution logic used by this module.
     def _suggested_solution(self, report: dict) -> str:
         suggestion = str(report.get("suggestion", "")).strip()
         if suggestion:
             return suggestion
         return "No LLM suggestion was available for this run."
 
+    # Run the render files logic used by this module.
     def _render_files(self, report: dict) -> str:
         files = report.get("snapshot", {}).get("files", [])
         if not files:
@@ -63,6 +70,7 @@ class HTMLReportGenerator:
         items = "".join(f"<li>{escape(str(path))}</li>" for path in files)
         return f"<ul>{items}</ul>"
 
+    # Run the render code block logic used by this module.
     def _render_code_block(self, report: dict) -> str:
         results = report.get("results", [])
         if not results:
@@ -74,6 +82,7 @@ class HTMLReportGenerator:
             return "<p>No matching code chunk was retrieved.</p>"
         return f"<pre><code>{escape(code)}</code></pre>"
 
+    # Build the internal data structure used by the analysis pipeline.
     def build_html(self, report: dict, repo_source: str | Path, error_message: str) -> str:
         repo_name = self._repo_name(repo_source)
         suggestion = self._suggested_solution(report)
@@ -147,6 +156,7 @@ class HTMLReportGenerator:
         safe_name = self._safe_filename(report_name or repo_name)
         return target_dir / f"{safe_name}.html"
 
+    # Save the generated result to the requested destination.
     def save_report(
         self,
         report: dict,
@@ -155,6 +165,7 @@ class HTMLReportGenerator:
         output_dir: Path | None = None,
         report_name: str | None = None,
     ) -> Path:
+        # Write the generated HTML report to disk for later review.
         target_dir = Path(output_dir) if output_dir is not None else self.reports_dir
         target_dir.mkdir(parents=True, exist_ok=True)
 
@@ -163,6 +174,7 @@ class HTMLReportGenerator:
         return output_path
 
 
+# Generate the output artifact or report described by the function.
 def generate_html_summary(
     report: dict,
     repo_source: str | Path,
