@@ -2,6 +2,8 @@
 
 A desktop-friendly repository analysis tool that inspects a project, validates dependencies, and generates debugging insights through a polished Tkinter dashboard, a CLI workflow, and a notebook prototype.
 
+For step-by-step instructions after installation, see [USING_THE_APP.md](USING_THE_APP.md).
+
 ## What this project does
 
 - Loads a local repository or GitHub URL for analysis
